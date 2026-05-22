@@ -1,4 +1,4 @@
-# 🛡️ Automated Intrusion Detection and Response System (SIEM/SOAR)
+# 🛡️ Automated Intrusion Detection and Response System Using Wazuh and Ansible on Linux
 
 ![Wazuh](https://img.shields.io/badge/Wazuh-SIEM-blue)
 ![Ansible](https://img.shields.io/badge/Ansible-Automation-red)
