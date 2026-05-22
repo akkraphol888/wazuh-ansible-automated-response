@@ -1,52 +1,60 @@
-# 🛡️ Automated Intrusion Detection and Response System Using Wazuh and Ansible on Linux
+# 🛡️ Automated Intrusion Detection and Response System (SIEM/SOAR)
 
 ![Wazuh](https://img.shields.io/badge/Wazuh-SIEM-blue)
 ![Ansible](https://img.shields.io/badge/Ansible-Automation-red)
 ![Linux](https://img.shields.io/badge/Linux-Environment-yellow)
 ![Bash](https://img.shields.io/badge/Bash-Scripting-green)
 
-ระบบตรวจจับและตอบสนองต่อภัยคุกคามอัตโนมัติ (SIEM/SOAR) บนระบบปฏิบัติการ Linux โดยใช้ **Wazuh** ในการวิเคราะห์ Log และตรวจจับความผิดปกติร่วมกับ **Ansible** ในการควบคุมโครงสร้างพื้นฐานเพื่อระงับเหตุ (Active Response) ด้วยการบล็อก IP ผู้โจมตีผ่าน iptables ภายใน 1-3 วินาที
+ระบบตรวจจับและตอบสนองต่อภัยคุกคามทางไซเบอร์แบบอัตโนมัติ (Automated Active Response) บนสภาพแวดล้อม Linux โดยการผสานการทำงานของ **Wazuh** (ทำหน้าที่วิเคราะห์และตรวจจับ) และ **Ansible** (ทำหน้าที่ควบคุมและสั่งการ) เพื่อระงับเหตุภัยคุกคามด้วยการบล็อก IP ผู้โจมตีภายใน 1-3 วินาที
 
 ---
 
-## 🎯 คุณสมบัติหลักของระบบ (Key Features)
-- **Multi-Vector Threat Detection:** รองรับการตรวจจับการโจมตีทั้งในระดับ Network Layer และ Application Layer
-- **Automated Mitigation (Global Block):** สั่งการผ่าน Ansible Playbook เพื่อแทรกกฎ `iptables DROP` บล็อก IP ผู้โจมตีทันทีเมื่อความรุนแรงถึงเกณฑ์ที่กำหนด
-- **Anti-Spam Cache Mechanism:** พัฒนาสคริปต์ด่านหน้าคอยกรอง Request ที่ซ้ำซ้อนในระดับมิลลิวินาที เพื่อป้องกันเสถียรภาพของเซิร์ฟเวอร์ ไม่ให้เกิดสภาวะ Race Condition ตอนโดนสแกนหนักๆ
-- **Network Sensor Tuning:** ประยุกต์ใช้กฎ `iptables LOG` ดักจับเฉพาะแพ็กเก็ตที่เป็น SYN Flag เพื่อส่งต่อให้ Wazuh วิเคราะห์ ทำให้สามารถตรวจจับ Stealth Port Scan ได้สำเร็จ
+## 🎯 คุณสมบัติเด่น (Key Engineering Features)
+
+- **Automated Mitigation (Global Block):** ควบคุมโครงสร้างพื้นฐานผ่าน Ansible Playbook (IaC) เพื่อแทรกกฎ `iptables DROP` ระงับการโจมตีได้ทันที
+- **Anti-Spam Cache Mechanism:** พัฒนา Bash Script เป็นด่านหน้าเพื่อคัดกรอง Request ที่ซ้ำซ้อนระดับมิลลิวินาที ป้องกันเซิร์ฟเวอร์เกิดสภาวะ Race Condition จากการถูกสแกนปริมาณมหาศาล
+- **Network Sensor Tuning:** ประยุกต์ใช้กฎ `iptables LOG` ร่วมกับ Custom Rules เพื่ออุดช่องโหว่การตรวจจับระดับ Application ทำให้ระบบสามารถดักจับ Stealth Port Scan ได้
 
 ---
 
-## 🔒 ผลการทดสอบการตรวจจับ (Tested Use Cases)
-ระบบผ่านการทดสอบและสามารถตอบสนองต่อภัยคุกคามหลักได้สำเร็จ 100% ดังนี้:
-1. **SSH Brute Force Attack:** ตรวจจับการเดารหัสผ่านผิดซ้ำๆ ผ่าน `auth.log` และบล็อก IP อัตโนมัติ
-2. **Stealth Port Scanning (Nmap -sS):** ตรวจจับการสแกนพอร์ตแบบซ่อนตัวผ่าน Custom Rule ระดับ Network
-3. **SQL Injection (SQLi):** ตรวจจับ Payload อันตราย (เช่น `UNION SELECT`) ผ่าน Apache Access Log แม้เซิร์ฟเวอร์จะตอบกลับเป็น HTTP 200 OK
-4. **Cross-Site Scripting (XSS):** ตรวจจับการส่งแท็กสคริปต์อันตรายผ่าน URL Parameter
+## 🔒 ผลการทดสอบภัยคุกคาม (Tested Security Use Cases)
+
+ระบบสามารถตรวจจับและตอบสนองต่อการโจมตีครอบคลุมทั้ง Network Layer และ Application Layer ได้สำเร็จ 100% ดังนี้:
+1. **SSH Brute Force Attack:** ตรวจจับการโจมตีรหัสผ่านซ้ำๆ 
+2. **Stealth Port Scanning (Nmap -sS):** ตรวจจับการสแกนพอร์ตแบบซ่อนตัว (SYN Scan)
+3. **SQL Injection (SQLi):** ตรวจจับ Payload อันตราย (เช่น `UNION SELECT`) แม้เซิร์ฟเวอร์ตอบกลับ 200 OK
+4. **Cross-Site Scripting (XSS):** ตรวจจับการฝังโค้ดอันตรายผ่าน URL Parameter
 5. **Directory Traversal:** ตรวจจับพฤติกรรมการพยายามเข้าถึงไฟล์ระบบ (`../../../../etc/passwd`)
-6. **Web Vulnerability Scanning (Nikto):** ตรวจจับการยิงสแกนช่องโหว่เว็บปริมาณมหาศาล ยกระดับ Alert เป็น Level 10 ด้วย Correlation Rules
+6. **Web Vulnerability Scanning (Nikto):** ยกระดับ Alert ผ่าน Correlation Rules เมื่อมีการสแกนหาช่องโหว่ปริมาณมาก
 
 ---
 
-## 🏗️ สถาปัตยกรรมของระบบ (3-Layer Pipeline)
+## 🏗️ สถาปัตยกรรมและตรรกะการทำงาน (Architecture & Methodology)
 
-*(ใสรูปรูปแผนภาพ Topology/Architecture ตรงนี้)*
-`![System Architecture](ชื่อไฟล์รูปภาพของคุณ.png)`
+### 1. Network Topology (ภาพรวมโครงสร้างเครือข่าย)
+แผนผังเครือข่ายจำลอง แสดงตำแหน่งของ Attacker, Wazuh Agent (เป้าหมาย) และ Wazuh Manager (ศูนย์กลาง) พร้อมช่องทางการสื่อสารและการสั่งการ
+<p align="center">
+  <img src="image_2.jpg" alt="Network Topology and Attack Flow Diagram" width="90%" />
+</p>
 
-1. **Detection Layer:** เครื่อง Agent รวบรวมและส่ง Log (`auth.log`, `access.log`, `syslog`) ไปยัง Manager ผ่านพอร์ต 1514 (AES-256)
-2. **Analysis Layer:** Wazuh Manager ถอดรหัส Log นำไปเทียบกับ Rule และสั่งการ Active Response เมื่อพบภัยคุกคามระดับสูง
-3. **Response Layer:** สคริปต์ Bash ทำหน้าที่ตรวจสอบ Whitelist, เช็ค Cache และเรียกใช้งาน Ansible Playbook เพื่อวิ่งไปบล็อก IP บนเซิร์ฟเวอร์เป้าหมาย
-
----
-
-## 📁 โครงสร้างไฟล์ในคลังข้อมูล (Repository Contents)
-- `wazuh-ansible.sh`: สคริปต์ Bash ด่านหน้าสำหรับควบคุม Whitelist, Anti-Spam Cache และเรียกใช้ Ansible
-- `block_attacker_global.yml`: ไฟล์ Ansible Playbook (Infrastructure as Code) สำหรับจัดการตาราง iptables
-- `local_rules.xml`: Custom Rules ภาษา XML ที่เขียนเพิ่มบน Wazuh Manager เพื่อดักจับ Port Scan
+### 2. Active Response Logic Flow (ตรรกะการตอบสนองอัตโนมัติ)
+ผังงานแสดงกระบวนการตัดสินใจ (Decision Making) ของระบบ ตั้งแต่การวิเคราะห์ Rule ID, การตรวจสอบผ่านระบบ Safeguard (Whitelist & Cache) ไปจนถึงการเรียกใช้งาน Ansible Playbook
+<p align="center">
+  <img src="image_1.jpg" alt="Active Response Logic Flowchart" width="70%" />
+</p>
 
 ---
 
-## 📄 เอกสารโครงงานฉบับเต็ม (Project Documentation)
-สามารถกดอ่านรายละเอียดการตั้งค่าเชิงลึก สคริปต์ทั้งหมด และผลการทดลองอย่างละเอียดได้ที่ลิงก์ด้านล่างนี้:
+## 📁 โครงสร้างไฟล์สำคัญ (Repository Contents)
 
-**[👉 คลิกที่นี่เพื่ออ่านเล่มรายงานฉบับเต็ม (PDF) ](https://drive.google.com/file/d/1tl0GeAQdkV-ZeD1jXlgXxEYWOjIA3o0G/view?usp=drive_link)**
+- `wazuh-ansible.sh`: สคริปต์ Bash ด่านหน้าสำหรับควบคุม Whitelist, Anti-Spam Cache และส่งตัวแปรให้ Ansible
+- `block_attacker_global.yml`: ไฟล์ Ansible Playbook สำหรับจัดการตาราง iptables แบบอัตโนมัติ
+- `local_rules.xml`: Custom Rules ภาษา XML ที่เขียนเพิ่มเพื่อดักจับ Network-based attacks (เช่น Port Scan)
+
+---
+
+## 📄 เอกสารโครงงานฉบับเต็ม (Full Project Documentation)
+
+สำหรับรายละเอียดการตั้งค่าเชิงลึก (Configuration), โค้ดฉบับเต็ม และผลการทดลองอย่างละเอียด สามารถอ่านได้จากเล่มรายงานฉบับสมบูรณ์ด้านล่างนี้:
+
+**[👉 คลิกที่นี่เพื่อเปิดอ่านเล่มรายงาน (PDF) ](https://drive.google.com/file/d/1tl0GeAQdkV-ZeD1jXlgXxEYWOjIA3o0G/view?usp=drive_link)**
