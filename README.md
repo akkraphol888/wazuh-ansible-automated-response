@@ -34,13 +34,13 @@
 ### 1. Network Topology (ภาพรวมโครงสร้างเครือข่าย)
 แผนผังเครือข่ายจำลอง แสดงตำแหน่งของ Attacker, Wazuh Agent (เป้าหมาย) และ Wazuh Manager (ศูนย์กลาง) พร้อมช่องทางการสื่อสารและการสั่งการ
 <p align="center">
-  <img src="image_2.jpg" alt="Network Topology and Attack Flow Diagram" width="90%" />
+  <img src="image2.jpg" alt="Network Topology and Attack Flow Diagram" width="90%" />
 </p>
 
 ### 2. Active Response Logic Flow (ตรรกะการตอบสนองอัตโนมัติ)
 ผังงานแสดงกระบวนการตัดสินใจ (Decision Making) ของระบบ ตั้งแต่การวิเคราะห์ Rule ID, การตรวจสอบผ่านระบบ Safeguard (Whitelist & Cache) ไปจนถึงการเรียกใช้งาน Ansible Playbook
 <p align="center">
-  <img src="image_1.jpg" alt="Active Response Logic Flowchart" width="70%" />
+  <img src="image1.jpg" alt="Active Response Logic Flowchart" width="70%" />
 </p>
 
 ---
