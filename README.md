@@ -49,4 +49,4 @@
 ## 📄 เอกสารโครงงานฉบับเต็ม (Project Documentation)
 สามารถกดอ่านรายละเอียดการตั้งค่าเชิงลึก สคริปต์ทั้งหมด และผลการทดลองอย่างละเอียดได้ที่ลิงก์ด้านล่างนี้:
 
-**[👉 คลิกที่นี่เพื่ออ่านเล่มรายงานฉบับเต็ม (PDF) ]([ใส่ลิงก์_Google_Drive_ของไฟล์_PDF_ตรงนี้](https://drive.google.com/file/d/1tl0GeAQdkV-ZeD1jXlgXxEYWOjIA3o0G/view?usp=sharing))**
+**[👉 คลิกที่นี่เพื่ออ่านเล่มรายงานฉบับเต็ม (PDF) ](https://drive.google.com/file/d/1tl0GeAQdkV-ZeD1jXlgXxEYWOjIA3o0G/view?usp=drive_link)**
